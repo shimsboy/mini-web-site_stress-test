@@ -960,26 +960,37 @@ renderHome();
 /* ===================== 방문자 수 (Firebase Realtime Database) ===================== */
 (function(){
   var DB = 'https://stress-check-51936-default-rtdb.asia-southeast1.firebasedatabase.app';
+  var WINDOW_MS = 30*60*1000;
   var totalEl = document.getElementById('v-total');
   var todayEl = document.getElementById('v-today');
   if(!totalEl || !todayEl || typeof fetch !== 'function') return;
-  var kst = new Date(Date.now() + 9*60*60*1000);
-  var dayKey = kst.toISOString().slice(0,10).replace(/-/g,'');
-  var totalPath = '/visitors/total.json';
-  var dayPath = '/visitors/daily/' + dayKey + '.json';
+  var debug = /[?&]visitdebug=1/.test(location.search);
+  var dayKey = new Date(Date.now() + 9*3600*1000).toISOString().slice(0,10).replace(/-/g,'');
+  var totalPath = '/visits/total.json';
+  var dayPath = '/visits/daily/' + dayKey + '.json';
   function store(k, v){ try{ if(v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); }catch(e){} return null; }
-  function inc(path){
-    return fetch(DB + path, {method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({'.sv':{'increment':1}})});
+  try{ if(/[?&]resetvisit=1/.test(location.search)) localStorage.removeItem('sd_v_last'); }catch(e){}
+  function call(path, opts){
+    return fetch(DB + path, opts).then(function(r){
+      if(!r.ok) throw new Error('Firebase ' + r.status + ' ' + path);
+      return r.json();
+    });
   }
-  function read(path){ return fetch(DB + path).then(function(r){ if(!r.ok) throw new Error('read'); return r.json(); }); }
+  function inc(path){
+    return call(path, {method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({'.sv':{'increment':1}})});
+  }
   function fmt(n){ return Number(n || 0).toLocaleString('ko-KR'); }
-  var jobs = [];
-  if(store('vTotalCounted') !== '1'){ jobs.push(inc(totalPath).then(function(r){ if(r.ok) store('vTotalCounted','1'); })); }
-  if(store('vDayCounted') !== dayKey){ jobs.push(inc(dayPath).then(function(r){ if(r.ok) store('vDayCounted', dayKey); })); }
-  Promise.all(jobs.map(function(p){ return p.catch(function(){}); }))
-    .then(function(){ return Promise.all([read(totalPath), read(dayPath)]); })
+  var last = parseInt(store('sd_v_last') || '0', 10);
+  var counting = (Date.now() - last > WINDOW_MS)
+    ? Promise.all([inc(totalPath), inc(dayPath)]).then(function(){ store('sd_v_last', String(Date.now())); })
+    : Promise.resolve();
+  counting
+    .then(function(){ return Promise.all([call(totalPath), call(dayPath)]); })
     .then(function(v){ totalEl.textContent = fmt(v[0]); todayEl.textContent = fmt(v[1]); })
-    .catch(function(){});
+    .catch(function(e){
+      console.warn('[방문자]', e.message);
+      if(debug) totalEl.textContent = '⚠ ' + e.message;
+    });
 })();
 </script>
 </body>
