@@ -97,6 +97,12 @@
   .meter{ width:100%; height:12px; background:#eee; border-radius:8px; overflow:hidden; margin-top:8px; }
   .meter-bar{ height:100%; background:linear-gradient(90deg,#5B7FFF,#FF6B6B); }
   .back-link{ text-align:center; font-size:13px; color:#888; margin-top:14px; cursor:pointer; text-decoration:underline; padding:6px; }
+  .solution-box{
+    background:#eef7f0; border:1px solid #c9ecd4; border-radius:14px; padding:14px 16px;
+    text-align:left; margin-top:4px; margin-bottom:6px;
+  }
+  .solution-label{ font-size:13px; font-weight:800; color:#00915a; margin-bottom:6px; }
+  .solution-text{ font-size:13.5px; color:#2a2a2a; line-height:1.6; }
   .footer-note{
     font-size:11px; color:#222; text-align:center; margin-top:14px;
     background:rgba(255,255,255,0.85); padding:8px; border-radius:8px;
@@ -123,39 +129,113 @@
     position:absolute; top:0; left:0; width:100%; height:100%; border-radius:50%;
     background:radial-gradient(circle at 35% 30%, #ffffff, #cfd8ff 60%, #a9b8ff 100%);
     box-shadow:inset -2px -2px 4px rgba(0,0,0,0.15), 0 2px 3px rgba(0,0,0,0.1);
+    transition:transform .05s ease-out;
+  }
+  .bubble.popping{
+    animation:bubblePop .28s ease-out forwards;
+  }
+  @keyframes bubblePop{
+    0%{ transform:scale(1); }
+    30%{ transform:scale(1.35); filter:brightness(1.3); }
+    60%{ transform:scale(0.55) rotate(8deg); }
+    100%{ transform:scale(0.72) rotate(0deg); }
   }
   .bubble.popped{
     background:#e2e2e2; box-shadow:inset 1px 1px 3px rgba(0,0,0,0.2);
-    transform:scale(0.8);
+    transform:scale(0.72);
+  }
+  .bubble-cell{ position:relative; width:100%; padding-top:100%; overflow:visible; }
+  .burst-ring{
+    position:absolute; top:50%; left:50%; width:10px; height:10px; border-radius:50%;
+    border:3px solid #7c8cff; transform:translate(-50%,-50%) scale(1);
+    opacity:.9; pointer-events:none; animation:burstRing .35s ease-out forwards; z-index:5;
+  }
+  @keyframes burstRing{
+    0%{ width:10px; height:10px; opacity:.9; border-width:4px; }
+    100%{ width:120%; height:120%; opacity:0; border-width:1px; }
+  }
+  .burst-particle{
+    position:absolute; top:50%; left:50%; width:6px; height:6px; border-radius:50%;
+    background:#a9b8ff; pointer-events:none; z-index:5;
+    animation:burstFly .45s ease-out forwards;
+  }
+  @keyframes burstFly{
+    0%{ transform:translate(-50%,-50%) translate(0,0) scale(1); opacity:1; }
+    100%{ transform:translate(-50%,-50%) translate(var(--fx), var(--fy)) scale(0.2); opacity:0; }
+  }
+  .pop-word{
+    position:absolute; top:20%; left:50%; transform:translate(-50%,-50%);
+    font-size:13px; font-weight:900; color:#5B7FFF; pointer-events:none; z-index:6;
+    animation:popWordUp .55s ease-out forwards; white-space:nowrap;
+  }
+  @keyframes popWordUp{
+    0%{ opacity:1; transform:translate(-50%,-50%) scale(0.8); }
+    30%{ opacity:1; transform:translate(-50%,-140%) scale(1.15); }
+    100%{ opacity:0; transform:translate(-50%,-220%) scale(1); }
+  }
+  .bubble-grid.arena-shake{ animation:arenaShake .18s linear; }
+  @keyframes arenaShake{
+    0%{ transform:translate(0,0); } 30%{ transform:translate(-3px,2px); }
+    60%{ transform:translate(3px,-2px); } 100%{ transform:translate(0,0); }
   }
   .combo-msg{
     text-align:center; font-size:13px; font-weight:700; color:var(--accent);
     height:18px; margin-bottom:6px;
   }
 
-  .visitor-counter{display:flex;gap:10px;margin:0 0 14px;}
-  .visitor-pill{flex:1;background:rgba(255,255,255,0.94);color:#111;border-radius:14px;padding:12px 10px;text-align:center;box-shadow:0 8px 18px rgba(0,0,0,0.10);}
-  .visitor-pill .v-label{font-size:11px;color:#666;margin-bottom:4px;}
-  .visitor-pill .v-value{font-size:18px;font-weight:800;color:var(--accent2);}
-
+  /* ===== 스트레스 브레이커(스매시) 게임 스타일 ===== */
+  .smash-timerbar{ width:100%; height:10px; background:#eee; border-radius:6px; overflow:hidden; margin-bottom:14px; }
+  .smash-timerbar-inner{ height:100%; background:linear-gradient(90deg,#FF6B6B,#ff3b3b); width:100%; transition:width .1s linear; }
+  .smash-stats{ display:flex; justify-content:space-between; margin-bottom:10px; }
+  .smash-stats .stat{ font-size:14px; font-weight:700; color:#333; }
+  .smash-stats .stat span{ color:var(--accent); font-size:20px; }
+  .smash-arena{
+    position:relative; width:100%; height:280px; background:radial-gradient(circle,#2b2b40,#151522);
+    border-radius:20px; display:flex; align-items:center; justify-content:center;
+    overflow:hidden; margin-bottom:14px; touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+    user-select:none; -webkit-user-select:none;
+  }
+  .smash-target{
+    font-size:96px; cursor:pointer; user-select:none; -webkit-user-select:none;
+    filter:drop-shadow(0 6px 10px rgba(0,0,0,0.4));
+    transition:transform .06s ease-out;
+  }
+  .smash-arena.hit .smash-target{ transform:scale(0.78) rotate(-6deg); }
+  .smash-arena.shake{ animation:smashShake .12s linear; }
+  @keyframes smashShake{
+    0%{ transform:translate(0,0); } 25%{ transform:translate(-6px,3px); }
+    50%{ transform:translate(6px,-3px); } 75%{ transform:translate(-4px,2px); } 100%{ transform:translate(0,0); }
+  }
+  .smash-flash{
+    position:absolute; top:0; left:0; width:100%; height:100%; background:#fff;
+    opacity:0; pointer-events:none; border-radius:20px;
+  }
+  .smash-flash.on{ opacity:.35; transition:opacity .15s ease-out; }
+  .smash-pop{
+    position:absolute; font-size:22px; font-weight:800; color:#fff; pointer-events:none;
+    animation:smashPopUp .6s ease-out forwards;
+  }
+  @keyframes smashPopUp{
+    0%{ opacity:1; transform:translateY(0) scale(1); }
+    100%{ opacity:0; transform:translateY(-60px) scale(1.4); }
+  }
+  .smash-rank{ font-size:42px; font-weight:900; margin:10px 0; }
+  .visitor-box{position:fixed;top:8px;left:8px;z-index:1000;display:flex;flex-direction:column;gap:4px;pointer-events:none;}
+  .visitor-box .v-item{background:rgba(255,255,255,.95);color:#111;border-radius:10px;padding:5px 10px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.15);white-space:nowrap;}
+  .visitor-box .v-item b{font-size:13px;color:#5B7FFF;margin-left:4px;font-variant-numeric:tabular-nums;}
+  .site-links{display:flex;justify-content:center;gap:6px 16px;flex-wrap:wrap;margin:14px 0 6px;}
+  .site-links a{color:#fff;font-size:14px;font-weight:700;text-decoration:underline;text-underline-offset:3px;padding:8px 4px;}
 </style>
 </head>
 <body>
+<div class="visitor-box" id="visitor-box" aria-label="방문자 수">
+  <div class="v-item">👥 누적 <b id="v-total">-</b></div>
+  <div class="v-item">📅 오늘 <b id="v-today">-</b></div>
+</div>
 <div class="wrap">
   <div class="site-header">
     <div class="logo">🧪 스트레스 진단소</div>
     <div class="tagline">진단하고, 웃고, 뽁뽁이로 풀어버리기</div>
-  </div>
-
-  <div class="visitor-counter" id="visitor-counter" hidden>
-    <div class="visitor-pill">
-      <div class="v-label">👥 누적 방문자</div>
-      <div class="v-value" id="visitor-total">-</div>
-    </div>
-    <div class="visitor-pill">
-      <div class="v-label">📅 오늘 방문자</div>
-      <div class="v-value" id="visitor-today">-</div>
-    </div>
   </div>
 
   <div class="ad-slot" id="ad-top">광고 영역 (상단 배너) — 애드센스 코드 삽입 위치</div>
@@ -164,63 +244,17 @@
 
   <div class="ad-slot" id="ad-bottom">광고 영역 (하단 배너) — 애드센스 코드 삽입 위치</div>
 
+  <nav class="site-links" aria-label="사이트 정보">
+    <a href="about.html">사이트 소개</a>
+    <a href="privacy.html">개인정보처리방침</a>
+    <a href="contact.html">문의하기</a>
+  </nav>
+
   <div class="footer-note">테스트와 게임은 재미를 위한 콘텐츠이며 의학적 진단·치료를 대체하지 않습니다.</div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-const FIREBASE_DB_URL = 'https://stress-check-51936-default-rtdb.asia-southeast1.firebasedatabase.app/'.replace(/\/$/, '');
-const VISITOR_TZ = 'Asia/Seoul';
-
-async function trackVisitors() {
-  try {
-    const counterBox = document.getElementById('visitor-counter');
-    const totalEl = document.getElementById('visitor-total');
-    const todayEl = document.getElementById('visitor-today');
-    if (!counterBox || !totalEl || !todayEl || !FIREBASE_DB_URL) return;
-
-    const now = new Date();
-    const todayKey = new Intl.DateTimeFormat('en-CA', { timeZone: VISITOR_TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
-    const clientKey = Array.from(navigator.userAgent + '|' + screen.width + 'x' + screen.height).reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7).toString(16);
-    const totalNode = `${FIREBASE_DB_URL}/visitorStats/total.json`;
-    const todayNode = `${FIREBASE_DB_URL}/visitorStats/days/${todayKey}.json`;
-    const clientNode = `${FIREBASE_DB_URL}/visitorClients/${clientKey}.json`;
-    const todayClientNode = `${FIREBASE_DB_URL}/visitorClientsToday/${todayKey}/${clientKey}.json`;
-
-    const [totalRes, todayRes, clientRes, todayClientRes] = await Promise.all([
-      fetch(totalNode),
-      fetch(todayNode),
-      fetch(clientNode),
-      fetch(todayClientNode)
-    ]);
-
-    let total = Number(await totalRes.json()) || 0;
-    let today = Number(await todayRes.json()) || 0;
-    const clientSeen = await clientRes.json();
-    const todayClientSeen = await todayClientRes.json();
-
-    const writes = [];
-    if (!clientSeen) {
-      total += 1;
-      writes.push(fetch(totalNode, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(total) }));
-      writes.push(fetch(clientNode, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ firstSeenAt: new Date().toISOString() }) }));
-    }
-    if (!todayClientSeen) {
-      today += 1;
-      writes.push(fetch(todayNode, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(today) }));
-      writes.push(fetch(todayClientNode, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ seenAt: new Date().toISOString() }) }));
-    }
-
-    if (writes.length) await Promise.all(writes);
-
-    totalEl.textContent = total.toLocaleString('ko-KR');
-    todayEl.textContent = today.toLocaleString('ko-KR');
-    counterBox.hidden = false;
-  } catch (e) {
-    console.error('visitor tracking failed', e);
-  }
-}
-
 /* ===================== 테스트 데이터 ===================== */
 const TESTS = {
   burnout: {
@@ -257,15 +291,36 @@ const TESTS = {
         {t:"준비 완료", s:0},{t:"어느 정도 있음", s:1},{t:"조금 부족", s:2},{t:"전혀 없음(그래도 마음은 있음)", s:3}] }
     ],
     resultFn:(bScore,jScore)=>{
-      const bHigh = bScore >= 9, jHigh = jScore >= 9;
-      if(bHigh && jHigh) return { emoji:"🚨", title:"지금 당장 탈출 준비형",
-        desc:"몸과 마음이 이미 경고를 보내고 있고, 마음도 회사를 떠나 있어요. 이력서 업데이트와 함께 회복 계획을 동시에 세워보세요." };
-      if(bHigh && !jHigh) return { emoji:"🔋", title:"환경보다 회복이 필요한 소진형",
-        desc:"지금 힘든 건 회사 자체보다 누적된 피로일 가능성이 커요. 먼저 휴식과 업무 경계 설정에 집중해보세요." };
-      if(!bHigh && jHigh) return { emoji:"🚀", title:"성장 갈증 폭발형",
-        desc:"컨디션은 괜찮은데 더 배울 게 없다고 느끼고 있어요. 전형적인 이직 타이밍입니다." };
-      return { emoji:"🌿", title:"안정적 밸런스 유지형",
-        desc:"현재 컨디션과 커리어 방향 모두 안정적인 편이에요. 지금은 역량을 쌓기 좋은 시기입니다." };
+      const bLevel = bScore >= 14 ? 'extreme' : bScore >= 9 ? 'high' : bScore >= 5 ? 'moderate' : 'low';
+      const jHigh = jScore >= 9;
+      const key = bLevel + '_' + (jHigh ? 'j1' : 'j0');
+      const map = {
+        extreme_j1:{ emoji:"🚨", title:"완전 소진 + 즉시 탈출형",
+          desc:"몸과 마음의 경고등이 모두 켜졌고, 마음은 이미 회사를 떠난 상태예요. 방치하면 건강 문제로 이어질 수 있는 단계입니다.",
+          solution:"① 이번 주 안에 이력서 초안 1개 업데이트 ② 회사 내 EAP(직장인 상담) 또는 정신건강의학과 상담 1회 예약 ③ 퇴사 전 최소 3개월치 생활비 확보 여부 체크. 세 가지를 동시에 준비해야 안전하게 탈출할 수 있어요." },
+        extreme_j0:{ emoji:"🆘", title:"위험 신호 소진형",
+          desc:"이직 욕구는 크지 않지만 몸과 마음이 한계에 다다른 상태예요. 회사 문제라기보다 누적된 피로가 원인일 가능성이 큽니다.",
+          solution:"① 이번 달 안에 연차 최소 3일 연속 사용 신청 ② 상사에게 업무량 조정 요청(구체적 숫자로 말하기) ③ 수면 시간 7시간 확보를 1순위로 두기. 이직보다 몸을 먼저 회복시키는 게 더 급합니다." },
+        high_j1:{ emoji:"🔥", title:"지금 당장 탈출 준비형",
+          desc:"번아웃 지수와 이직 갈증 모두 높은 편이에요. 지금 환경이 심신 모두에 부담을 주고 있다는 신호입니다.",
+          solution:"① 링크드인·이력서를 이번 주에 손보기 ② 주 1~2회 30분 운동이나 취미 시간 고정 스케줄로 등록 ③ 관심 기업 3곳 리스트업하고 채용 공고 모니터링 시작. 준비는 서두르되 몸은 절대 무리하지 마세요." },
+        high_j0:{ emoji:"🔋", title:"회복이 우선인 소진형",
+          desc:"지금 힘든 건 회사 자체보다 누적된 피로일 가능성이 커요. 이직보다 휴식이 먼저 필요한 상태입니다.",
+          solution:"① 퇴근 후 회사 메신저·메일 알림 즉시 끄기 ② 최소 1시간은 폰 없이 쉬는 '디지털 디톡스' 시간 만들기 ③ 주말 중 하루는 회사 얘기 금지 규칙 세우기. 작은 경계 설정부터가 회복의 시작입니다." },
+        moderate_j1:{ emoji:"🚀", title:"성장 갈증 폭발형",
+          desc:"컨디션은 아직 괜찮은데 더 배울 게 없다고 느끼고 있어요. 전형적인 이직 타이밍의 초기 신호입니다.",
+          solution:"① 상사에게 새 프로젝트나 역할 변화를 먼저 요청해보기 ② 이직 시장 조사는 시작하되 실제 지원은 3개월 뒤로 여유있게 ③ 관심 분야 자격증·강의 1개 알아보기. 당장 움직이기보다 옵션을 넓히는 단계예요." },
+        moderate_j0:{ emoji:"⚠️", title:"관리 필요 그레이존형",
+          desc:"아직 위험 단계는 아니지만 피로와 스트레스가 서서히 쌓이고 있어요. 방치하면 소진형으로 넘어갈 수 있는 경계선입니다.",
+          solution:"① 이번 주 수면 시간이 6시간 이하인 날이 며칠인지 체크해보기 ② 상사와 업무 우선순위를 한번 재정리하는 미팅 요청 ③ 주 2회 이상 가벼운 운동 습관 만들기. 지금 손대면 큰 힘 안 들이고 예방됩니다." },
+        low_j1:{ emoji:"🌤️", title:"안정적인데 자꾸 흔들리는 호기심형",
+          desc:"몸과 마음은 안정적인데 새로운 기회에 대한 관심이 커요. 위기감보다는 성장 욕구에서 나온 흔들림입니다.",
+          solution:"① 관심 있는 분야 관련 뉴스레터나 커뮤니티 1개 구독해보기 ② 그 분야 실무자와 커피챗 1회 시도 ③ 3개월 뒤 다시 이 테스트로 마음이 얼마나 커졌는지 체크. 서두르지 말고 정보만 천천히 쌓으세요." },
+        low_j0:{ emoji:"🌿", title:"안정적 밸런스 유지형",
+          desc:"현재 컨디션과 커리어 방향 모두 안정적인 편이에요. 지금은 무리하지 않고 역량을 쌓기 좋은 시기입니다.",
+          solution:"① 지금 잘 되고 있는 루틴(수면, 운동, 업무 패턴)을 메모해서 기억해두기 ② 여유 시간에 새 스킬 하나 배우기 시작 ③ 6개월마다 이 테스트로 컨디션 점검해보기. 좋은 상태는 기록해야 오래 유지됩니다." }
+      };
+      return map[key];
     }
   },
   parenting: {
@@ -303,14 +358,30 @@ const TESTS = {
     ],
     resultFn:(score)=>{
       const pct = Math.round((score/36)*100);
-      if(pct < 25) return { emoji:"😌", title:"츄르 육아 고수형", pct,
-        desc:"체력도 멘탈도 안정적으로 육아를 즐기고 있어요! 나만의 페이스를 잘 지키면서 육아 동지들에게 노하우도 나눠주세요." };
-      if(pct < 50) return { emoji:"😅", title:"고군분투 밸런스형", pct,
-        desc:"체력과 멘탈 사이에서 아슬아슬한 줄타기 중이에요. 하루 30분이라도 '내 시간'을 사수해보세요." };
-      if(pct < 75) return { emoji:"😩", title:"육퇴 카운트다운형", pct,
-        desc:"이미 방전 경고등이 들어온 상태예요. 완벽한 부모가 되려는 부담을 잠시 내려놓아보세요." };
+      if(pct < 13) return { emoji:"😌", title:"츄르 육아 고수형", pct,
+        desc:"체력도 멘탈도 안정적으로 육아를 즐기고 있어요! 지금 페이스가 상당히 건강한 상태입니다.",
+        solution:"① 지금 잘 하고 있는 루틴 3가지를 메모해두기 ② 여유 될 때 맘카페·커뮤니티에 노하우 공유해보기 ③ 한 달에 한 번은 온전히 나만을 위한 시간 예약. 지금 상태를 오래 유지하는 게 목표예요." };
+      if(pct < 25) return { emoji:"🙂", title:"여유로운 균형형", pct,
+        desc:"대체로 안정적이지만 가끔 소소한 피로가 쌓이고 있어요. 아직 큰 위기는 아닌 좋은 상태입니다.",
+        solution:"① 주 1회 30분 '나만의 시간'을 캘린더에 미리 고정 ② 배우자와 주말 육아 교대 시간 정하기 ③ 몸이 힘든 날은 배달·간편식 부담 없이 활용하기. 완벽함보다 지속 가능함이 더 중요해요." };
+      if(pct < 38) return { emoji:"😊", title:"열심히 고군분투형", pct,
+        desc:"체력과 멘탈 사이에서 균형을 잡으려 애쓰고 있어요. 조금씩 피로가 누적되는 신호가 보입니다.",
+        solution:"① 배우자와 이번 주 안에 육아 분담표를 구체적으로 다시 짜보기 ② 하루 30분은 무조건 내 시간으로 확보 ③ 등원·이유식처럼 반복 스트레스 구간에 자동화(밀키트, 시터 등) 도입 검토. 작은 분담 조정이 큰 차이를 만들어요." };
+      if(pct < 50) return { emoji:"😅", title:"아슬아슬 밸런스형", pct,
+        desc:"겉으론 괜찮아 보이지만 속으로는 아슬아슬한 줄타기를 하고 있어요. 방전 직전 단계로 넘어가기 전입니다.",
+        solution:"① 오늘 저녁 한 끼는 완벽한 집밥 대신 간편식으로 대체해보기 ② 근처 시간제 돌봄 서비스나 아이돌보미 정보 미리 알아두기 ③ 배우자에게 '힘들다'는 말을 구체적 상황으로 표현해보기. 기준을 낮추는 게 실패가 아니에요." };
+      if(pct < 63) return { emoji:"😩", title:"육퇴 카운트다운형", pct,
+        desc:"이미 방전 경고등이 들어온 상태예요. 완벽한 부모가 되려는 부담이 스트레스를 더 키우고 있습니다.",
+        solution:"① 오늘 배우자에게 구체적으로 도와줄 일 한 가지를 정확히 요청하기(예: 저녁 설거지) ② 이번 주 안에 반나절이라도 혼자만의 외출 계획 세우기 ③ 완벽한 부모라는 기준 대신 '오늘 무사히 넘겼다'로 목표 낮추기. 지금은 버티기가 아니라 도움 요청이 필요해요." };
+      if(pct < 75) return { emoji:"😣", title:"경고등 켜진 소진형", pct,
+        desc:"체력과 멘탈 모두 상당히 소진된 상태예요. 지금은 버티기보다 회복이 필요한 시점입니다.",
+        solution:"① 하루 최소 1시간은 배우자·가족에게 아이를 맡기고 완전히 분리되기 ② 산후우울증·양육 스트레스 관련 지역 정신건강복지센터 상담 알아보기 ③ 잠이라도 하루 6시간 이상 확보하는 걸 최우선 목표로. 지금은 버티기보다 회복이 먼저입니다." };
+      if(pct < 88) return { emoji:"🥴", title:"한계 직전 번아웃형", pct,
+        desc:"체력과 감정 모두 한계에 다다르고 있어요. 짜증이나 무기력이 자주 느껴질 수 있는 단계입니다.",
+        solution:"① 오늘 안에 배우자·부모님께 상황이 심각함을 명확히 알리기 ② 지역 육아종합지원센터(1577-2514)에 돌봄 지원 문의하기 ③ 짜증·무기력이 2주 이상 계속되면 정신건강의학과 상담 예약하기. 혼자 버티는 시기는 지났어요." };
       return { emoji:"🆘", title:"긴급 SOS 방전형", pct,
-        desc:"지금은 '더 잘하기'보다 '나를 회복하기'가 먼저예요. 주변에 꼭 도움을 요청하세요." };
+        desc:"지금은 '더 잘하기'보다 '나를 회복하기'가 먼저예요. 방치하면 건강에도 영향을 줄 수 있는 단계입니다.",
+        solution:"① 오늘 바로 배우자·가족에게 SOS 요청(구체적으로 어떤 도움이 필요한지 말하기) ② 지역 육아종합지원센터(1577-2514)나 정신건강 위기상담전화(1577-0199)에 연락 ③ 잠깐이라도 하루 하나는 나 자신을 위한 최소한의 행동(따뜻한 물 마시기, 5분 산책) 실천. 지금은 도움을 요청하는 게 가장 강한 선택이에요." };
     }
   }
 };
@@ -318,6 +389,11 @@ const TESTS = {
 const GAME = {
   icon:"🫧", title:"뽁뽁이 팡팡 스트레스 해소", badge:"게임",
   listDesc:"터뜨릴 때마다 스트레스가 뻥! 뽁뽁이 60개 도전"
+};
+
+const GAME2 = {
+  icon:"🥊", title:"스트레스 브레이커 (30초 스매시)", badge:"강렬",
+  listDesc:"30초 동안 미친듯이 두들겨서 스트레스 최고 기록 세우기"
 };
 
 /* ===================== 상태 ===================== */
@@ -352,6 +428,13 @@ function renderHome(){
     <div class="test-list">${testCards}</div>
     <div class="section-label">🎮 스트레스 해소 게임</div>
     <div class="test-list">
+      <div class="test-card" onclick="openGame2()">
+        <div class="icon">${GAME2.icon}</div>
+        <div class="info">
+          <div class="t-title">${GAME2.title}<span class="badge" style="background:#ff3b3b;">${GAME2.badge}</span></div>
+          <div class="t-desc">${GAME2.listDesc}</div>
+        </div>
+      </div>
       <div class="test-card" onclick="openGame()">
         <div class="icon">${GAME.icon}</div>
         <div class="info">
@@ -434,18 +517,26 @@ function renderResult(){
   const otherKey = Object.keys(TESTS).find(k => k !== currentTestKey);
   const otherTest = TESTS[otherKey];
 
+  const solutionHtml = r.solution ? `
+      <div class="solution-box">
+        <div class="solution-label">💡 이렇게 해보세요</div>
+        <div class="solution-text">${r.solution}</div>
+      </div>` : '';
+
   document.getElementById('app').innerHTML = `
     <div class="center">
       <div class="emoji-big">${r.emoji}</div>
       <div class="result-title" style="color:var(--accent2)">${r.title}</div>
       ${extraHtml}
       <div class="result-desc">${r.desc}</div>
+      ${solutionHtml}
       <div class="ad-slot">광고 영역 (결과 하단 인라인) — 애드센스 코드 삽입 위치</div>
       <div class="share-row">
         <button class="btn" onclick="shareResult()">결과 공유하기</button>
         <button class="btn secondary" onclick="startTest()">다시 하기</button>
       </div>
-      <button class="btn green" onclick="openGame()">🫧 스트레스 뽁뽁이로 풀러 가기</button>
+      <button class="btn" style="background:#ff3b3b;" onclick="openGame2()">🥊 스트레스 브레이커로 강하게 풀기</button>
+      <button class="btn green" onclick="openGame()">🫧 뽁뽁이로 살짝 풀기</button>
       <button class="btn red" onclick="openIntro('${otherKey}')">${otherTest.icon} ${otherTest.title}도 해보기</button>
       <div class="back-link" onclick="renderHome()">← 홈으로</div>
     </div>`;
@@ -494,6 +585,8 @@ function openGame(){
   buildBubbles();
 }
 
+const POP_WORDS = ["뻥!","펑!","팡!","시원해!","뽁!","캬!"];
+
 function buildBubbles(){
   const grid = document.getElementById('bubble-grid');
   grid.innerHTML = '';
@@ -502,19 +595,57 @@ function buildBubbles(){
     cell.className = 'bubble-cell';
     const b = document.createElement('div');
     b.className = 'bubble';
-    b.addEventListener('click', ()=>popBubble(b));
-    b.addEventListener('touchstart', function(e){ e.preventDefault(); popBubble(b); }, {passive:false});
+    b.addEventListener('click', ()=>popBubble(b, cell));
+    b.addEventListener('touchstart', function(e){ e.preventDefault(); popBubble(b, cell); }, {passive:false});
     cell.appendChild(b);
     grid.appendChild(cell);
   }
 }
 
-function popBubble(el){
-  if(el.classList.contains('popped')) return;
-  el.classList.add('popped');
+function popBubble(el, cell){
+  if(el.classList.contains('popped') || el.classList.contains('popping')) return;
+  el.classList.add('popping');
   poppedCount++;
   const counter = document.getElementById('pop-count');
   if(counter) counter.textContent = poppedCount;
+
+  try{ if(navigator.vibrate) navigator.vibrate(15); }catch(e){}
+
+  const ring = document.createElement('div');
+  ring.className = 'burst-ring';
+  cell.appendChild(ring);
+  setTimeout(()=>ring.remove(), 400);
+
+  for(let i=0;i<6;i++){
+    const p = document.createElement('div');
+    p.className = 'burst-particle';
+    const angle = (Math.PI*2/6)*i + Math.random()*0.5;
+    const dist = 26 + Math.random()*14;
+    p.style.setProperty('--fx', Math.cos(angle)*dist + 'px');
+    p.style.setProperty('--fy', Math.sin(angle)*dist + 'px');
+    cell.appendChild(p);
+    setTimeout(()=>p.remove(), 500);
+  }
+
+  if(Math.random() < 0.35){
+    const word = document.createElement('div');
+    word.className = 'pop-word';
+    word.textContent = POP_WORDS[Math.floor(Math.random()*POP_WORDS.length)];
+    cell.appendChild(word);
+    setTimeout(()=>word.remove(), 600);
+  }
+
+  const grid = document.getElementById('bubble-grid');
+  if(grid){
+    grid.classList.remove('arena-shake');
+    void grid.offsetWidth;
+    grid.classList.add('arena-shake');
+  }
+
+  setTimeout(()=>{
+    el.classList.remove('popping');
+    el.classList.add('popped');
+  }, 280);
 
   const msgBox = document.getElementById('combo-msg');
   if(poppedCount % 10 === 0 && msgBox){
@@ -541,7 +672,203 @@ function resetGame(){
   openGame();
 }
 
+/* ===================== 게임2: 스트레스 브레이커 (30초 스매시) ===================== */
+const SMASH_DURATION = 30;
+const SMASH_TARGETS = ["😤","😡","🤬"];
+let smashScore = 0;
+let smashTimeLeft = SMASH_DURATION;
+let smashTimerId = null;
+let smashActive = false;
+let smashCombo = 0;
+let smashBest = 0;
+
+function openGame2(){
+  smashScore = 0;
+  smashTimeLeft = SMASH_DURATION;
+  smashActive = false;
+  smashCombo = 0;
+  try{ smashBest = Number(localStorage.getItem('smashBest') || 0); }catch(e){ smashBest = 0; }
+
+  document.getElementById('app').innerHTML = `
+    <div>
+      <h1>🥊 스트레스 브레이커</h1>
+      <div class="sub">30초 동안 화면을 마구 눌러서 스트레스를 날려버리세요!</div>
+      <div class="smash-timerbar"><div class="smash-timerbar-inner" id="smash-timerbar-inner" style="width:100%"></div></div>
+      <div class="smash-stats">
+        <div class="stat">점수: <span id="smash-score">0</span></div>
+        <div class="stat">남은 시간: <span id="smash-time">${SMASH_DURATION}</span>초</div>
+      </div>
+      <div class="combo-msg" id="smash-combo-msg"></div>
+      <div class="smash-arena" id="smash-arena">
+        <div class="smash-flash" id="smash-flash"></div>
+        <div class="smash-target" id="smash-target">😤</div>
+      </div>
+      <div class="sub" id="smash-hint" style="margin-bottom:6px;">타겟을 눌러서 시작하세요!</div>
+      <button class="btn secondary" onclick="renderHome()">← 홈으로</button>
+    </div>`;
+
+  const target = document.getElementById('smash-target');
+  target.addEventListener('click', smashHit);
+  target.addEventListener('touchstart', function(e){ e.preventDefault(); smashHit(); }, {passive:false});
+}
+
+function smashHit(){
+  if(smashTimeLeft <= 0) return;
+  if(!smashActive){
+    smashActive = true;
+    startSmashTimer();
+    const hint = document.getElementById('smash-hint');
+    if(hint) hint.textContent = '계속 두드리세요! 💥';
+  }
+  smashScore++;
+  smashCombo++;
+  const scoreEl = document.getElementById('smash-score');
+  if(scoreEl) scoreEl.textContent = smashScore;
+
+  const arena = document.getElementById('smash-arena');
+  const flash = document.getElementById('smash-flash');
+  const targetEl = document.getElementById('smash-target');
+  if(arena){
+    arena.classList.add('hit','shake');
+    setTimeout(()=>{ arena.classList.remove('hit','shake'); }, 130);
+  }
+  if(flash){
+    flash.classList.add('on');
+    setTimeout(()=>flash.classList.remove('on'), 150);
+  }
+  if(targetEl){
+    targetEl.textContent = SMASH_TARGETS[Math.floor(Math.random()*SMASH_TARGETS.length)];
+    const arenaRect = arena.getBoundingClientRect();
+    const maxX = Math.max(arenaRect.width - 96, 0);
+    const maxY = Math.max(arenaRect.height - 96, 0);
+    targetEl.style.position = 'absolute';
+    targetEl.style.left = Math.floor(Math.random()*maxX) + 'px';
+    targetEl.style.top = Math.floor(Math.random()*maxY) + 'px';
+  }
+  const popMsg = document.createElement('div');
+  popMsg.className = 'smash-pop';
+  popMsg.textContent = '+1';
+  popMsg.style.left = (40 + Math.random()*40) + '%';
+  popMsg.style.top = '50%';
+  if(arena){
+    arena.appendChild(popMsg);
+    setTimeout(()=>popMsg.remove(), 650);
+  }
+
+  const comboBox = document.getElementById('smash-combo-msg');
+  if(comboBox && smashCombo % 10 === 0){
+    comboBox.textContent = ["파워풀해요! 💪","더 세게!! 🔥","스트레스가 날아간다!","멈추지 마세요! ⚡"][Math.floor(Math.random()*4)];
+    setTimeout(()=>{ if(comboBox) comboBox.textContent=''; }, 900);
+  }
+}
+
+function startSmashTimer(){
+  smashTimerId = setInterval(()=>{
+    smashTimeLeft--;
+    const timeEl = document.getElementById('smash-time');
+    const barEl = document.getElementById('smash-timerbar-inner');
+    if(timeEl) timeEl.textContent = smashTimeLeft;
+    if(barEl) barEl.style.width = Math.max(0, (smashTimeLeft/SMASH_DURATION)*100) + '%';
+    if(smashTimeLeft <= 0){
+      clearInterval(smashTimerId);
+      endSmashGame();
+    }
+  }, 1000);
+}
+
+function endSmashGame(){
+  smashActive = false;
+  let isNewBest = false;
+  if(smashScore > smashBest){
+    smashBest = smashScore;
+    isNewBest = true;
+    try{ localStorage.setItem('smashBest', String(smashBest)); }catch(e){}
+  }
+  let rank, rankEmoji;
+  if(smashScore >= 90){ rank = "분노 조절 마스터 🏆"; rankEmoji = "🔥"; }
+  else if(smashScore >= 60){ rank = "스트레스 브레이커 💪"; rankEmoji = "🥊"; }
+  else if(smashScore >= 30){ rank = "적당히 화난 사람 😅"; rankEmoji = "😤"; }
+  else { rank = "아직 여유로운 편 🌿"; rankEmoji = "🌿"; }
+
+  document.getElementById('app').innerHTML = `
+    <div class="ad-slot">광고 영역 (게임 완료 후) — 애드센스 코드 삽입 위치</div>
+    <div class="center">
+      <div class="emoji-big">${rankEmoji}</div>
+      <div class="smash-rank">${smashScore}점</div>
+      <div class="result-title" style="color:var(--accent)">${rank}</div>
+      ${isNewBest ? '<div class="result-desc" style="color:#00b894; font-weight:800;">🎉 신기록 달성!</div>' : ''}
+      <div class="result-desc">최고 기록: ${smashBest}점<br>30초 동안 시원하게 스트레스를 날려버렸어요!</div>
+      <div class="share-row">
+        <button class="btn" onclick="shareSmashResult(${smashScore})">결과 공유하기</button>
+        <button class="btn secondary" onclick="openGame2()">다시 하기</button>
+      </div>
+      <button class="btn green" onclick="openGame()">🫧 뽁뽁이도 터뜨려보기</button>
+      <div class="back-link" onclick="renderHome()">← 홈으로</div>
+    </div>`;
+}
+
+function shareSmashResult(score){
+  try{
+    const text = `[스트레스 브레이커] 30초 동안 ${score}점 획득! 🥊\n너도 스트레스 날려보러 와봐 👉 스트레스 진단소 (사이트 링크)`;
+    if(navigator.share){
+      navigator.share({ title:'스트레스 진단소', text }).catch(()=>{});
+    } else if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(()=>{
+        showToast('결과가 복사됐어요! 카톡/SNS에 붙여넣어 공유해보세요 📋');
+      }).catch(()=>{
+        showToast('공유 기능은 실제 웹사이트 주소(URL)에서만 작동해요.');
+      });
+    } else {
+      showToast('공유 기능은 실제 웹사이트 주소(URL)에서만 작동해요.');
+    }
+  } catch(e){
+    showToast('공유 기능은 실제 웹사이트 주소(URL)에서만 작동해요.');
+  }
+}
+
 renderHome();
+
+/* ===================== 방문자 수 (Firebase Realtime Database) ===================== */
+(function(){
+  var DB = 'https://stress-check-51936-default-rtdb.asia-southeast1.firebasedatabase.app';
+  var totalEl = document.getElementById('v-total');
+  var todayEl = document.getElementById('v-today');
+  if(!totalEl || !todayEl || typeof fetch !== 'function') return;
+
+  var kst = new Date(Date.now() + 9*60*60*1000);
+  var dayKey = kst.toISOString().slice(0,10).replace(/-/g,'');
+  var totalPath = '/visitors/total.json';
+  var dayPath = '/visitors/daily/' + dayKey + '.json';
+
+  function store(k, v){ try{ if(v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); }catch(e){} return null; }
+  function inc(path){
+    return fetch(DB + path, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({'.sv':{'increment':1}})
+    });
+  }
+  function read(path){
+    return fetch(DB + path).then(function(r){ if(!r.ok) throw new Error('read'); return r.json(); });
+  }
+  function fmt(n){ return Number(n || 0).toLocaleString('ko-KR'); }
+
+  var jobs = [];
+  if(store('vTotalCounted') !== '1'){
+    jobs.push(inc(totalPath).then(function(r){ if(r.ok) store('vTotalCounted','1'); }));
+  }
+  if(store('vDayCounted') !== dayKey){
+    jobs.push(inc(dayPath).then(function(r){ if(r.ok) store('vDayCounted', dayKey); }));
+  }
+
+  Promise.all(jobs.map(function(p){ return p.catch(function(){}); }))
+    .then(function(){ return Promise.all([read(totalPath), read(dayPath)]); })
+    .then(function(v){
+      totalEl.textContent = fmt(v[0]);
+      todayEl.textContent = fmt(v[1]);
+    })
+    .catch(function(){});
+})();
 </script>
 </body>
 </html>
