@@ -1,158 +1,117 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="스트레스 진단소 문의 및 의견 보내기">
-  <meta name="theme-color" content="#6c5ce7">
   <title>문의하기 | 스트레스 진단소</title>
   <style>
-    :root {
-      --bg-start:#6c5ce7;
-      --bg-end:#00cec9;
-      --surface:#ffffff;
-      --text:#161616;
-      --muted:#595959;
-      --primary:#5b62e8;
-      --primary-dark:#4148c9;
-      --border:#e7e7ef;
-      --focus:#111827;
-      --shadow:0 18px 48px rgba(24, 24, 50, .20);
-    }
-    *,*::before,*::after{box-sizing:border-box}
-    html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-    body{
-      margin:0;
-      min-height:100vh;
-      min-height:100dvh;
-      display:grid;
-      place-items:center;
-      padding:24px 16px;
-      color:var(--text);
-      background:linear-gradient(135deg,var(--bg-start),var(--bg-end));
-      font-family:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
-      line-height:1.65;
-    }
-    main{width:min(100%,520px)}
-    .brand{
-      margin:0 0 14px;
-      text-align:center;
-      color:#fff;
-      font-size:26px;
-      font-weight:850;
-      letter-spacing:-.04em;
-    }
-    .card{
-      padding:32px 24px;
-      border:1px solid rgba(255,255,255,.55);
-      border-radius:24px;
-      background:var(--surface);
-      box-shadow:var(--shadow);
-    }
-    h1{
-      margin:0 0 10px;
-      text-align:center;
-      font-size:26px;
-      line-height:1.25;
-      letter-spacing:-.04em;
-    }
-    .intro{
-      max-width:40ch;
-      margin:0 auto 24px;
-      text-align:center;
-      color:var(--muted);
-      font-size:15px;
-    }
-    .contact-box{
-      padding:18px;
-      border:1px solid var(--border);
-      border-radius:16px;
-      background:#f8f8ff;
-      text-align:center;
-    }
-    .label{
-      margin:0 0 6px;
-      color:var(--muted);
-      font-size:13px;
-      font-weight:700;
-    }
-    .email{
-      display:inline-block;
-      color:var(--text);
-      font-size:16px;
-      font-weight:800;
-      overflow-wrap:anywhere;
-      text-decoration:none;
-    }
-    .email:hover{text-decoration:underline}
-    .actions{display:grid;gap:10px;margin-top:18px}
-    .button{
-      min-height:48px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:12px 18px;
-      border:0;
-      border-radius:14px;
-      background:var(--primary);
-      color:#fff;
-      font-size:15px;
-      font-weight:800;
-      text-decoration:none;
-      transition:background-color .18s ease,transform .18s ease;
-    }
+    :root{--primary:#5879f2;--primary-dark:#4263db;--text:#20202a;--muted:#666672;--border:#e5e5ea;--surface:#fff;--soft:#f6f5ff;--success:#16794a;--error:#b42318;--focus:#335cff}
+    *{box-sizing:border-box}
+    body{min-height:100vh;margin:0;padding:24px 14px;background:linear-gradient(135deg,#5e7bf4,#19b9cb);color:var(--text);font-family:Pretendard,"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.6}
+    main{width:min(100%,600px);margin:0 auto;padding:30px 32px;background:var(--surface);box-shadow:0 18px 50px rgba(23,31,67,.16)}
+    h1{margin:0 0 4px;text-align:center;font-size:28px;line-height:1.3;letter-spacing:-.04em}
+    .intro{margin:0 auto 28px;text-align:center;color:var(--muted);font-size:17px;line-height:1.55}
+    form{display:grid;gap:16px}
+    label{display:grid;gap:7px;font-size:16px;font-weight:750}
+    input,textarea{width:100%;border:1px solid var(--border);border-radius:15px;background:#fff;color:var(--text);font:inherit;font-size:16px;outline:none;box-shadow:0 0 0 1px rgba(0,0,0,.02);transition:border-color .18s,box-shadow .18s}
+    input{height:56px;padding:0 18px}
+    textarea{min-height:150px;padding:15px 18px;resize:vertical}
+    input:focus,textarea:focus{border-color:var(--focus);box-shadow:0 0 0 3px rgba(51,92,255,.12)}
+    .button{min-height:68px;margin-top:6px;border:0;border-radius:16px;background:var(--primary);color:#fff;font:inherit;font-size:18px;font-weight:850;cursor:pointer;transition:background-color .18s,transform .18s,opacity .18s}
     .button:hover{background:var(--primary-dark)}
-    .button:active{transform:scale(.98)}
-    .button.secondary{background:#ededf5;color:#222}
-    .button.secondary:hover{background:#dfdfea}
-    a:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
-    .guide{
-      margin:22px 0 0;
-      padding-top:18px;
-      border-top:1px solid var(--border);
-      color:var(--muted);
-      font-size:13px;
-    }
-    .guide strong{color:var(--text)}
-    .privacy{
-      margin:12px 0 0;
-      color:#727272;
-      font-size:12px;
-    }
-    @media (max-width:420px){
-      body{padding:18px 12px}
-      .card{padding:26px 18px;border-radius:20px}
-      h1{font-size:23px}
-      .email{font-size:15px}
-    }
-    @media (prefers-reduced-motion:reduce){
-      *,*::before,*::after{transition:none!important}
-    }
+    .button:active{transform:scale(.99)}
+    .button:disabled{cursor:wait;opacity:.68}
+    .status{display:none;margin:2px 0 0;padding:12px 14px;border-radius:12px;text-align:center;font-size:14px;font-weight:700}
+    .status.show{display:block}
+    .status.success{background:#eaf8f0;color:var(--success)}
+    .status.error{background:#fff0ee;color:var(--error)}
+    .direct{margin:26px 0 0;padding:18px;border-radius:15px;background:var(--soft);text-align:center;color:var(--muted);font-size:14px}
+    .direct a{display:block;margin-top:4px;color:#202038;font-size:16px;font-weight:850;overflow-wrap:anywhere;text-decoration:none}
+    .direct a:hover{text-decoration:underline}
+    .back{display:block;margin:20px auto 0;color:#4b4b57;text-align:center;font-size:14px;font-weight:700}
+    .privacy{margin:14px 0 0;color:#777782;text-align:center;font-size:12px}
+    .hp{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+    :focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+    @media(max-width:620px){body{padding:0}main{min-height:100vh;padding:22px 20px 30px}h1{font-size:25px}.intro{font-size:16px}.button{min-height:62px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}}
   </style>
 </head>
 <body>
   <main>
-    <p class="brand">🧪 스트레스 진단소</p>
-    <section class="card" aria-labelledby="contact-title">
-      <h1 id="contact-title">문의하기</h1>
-      <p class="intro">오류 제보, 개선 아이디어, 콘텐츠 및 광고 관련 문의를 보내주세요. 확인 후 가능한 범위에서 답변드리겠습니다.</p>
+    <h1>📫 문의하기</h1>
+    <p class="intro">테스트 오류 제보, 새 테스트 제안, 광고·제휴 문의 등<br>무엇이든 편하게 남겨주세요.</p>
 
-      <div class="contact-box">
-        <p class="label">연락용 이메일</p>
-        <a class="email" href="mailto:stresstest.contact@gmail.com">stresstest.contact@gmail.com</a>
-      </div>
+    <form id="contactForm" novalidate>
+      <label>이름 / 닉네임
+        <input id="contactName" name="name" type="text" autocomplete="name" maxlength="60" required>
+      </label>
+      <label>답장 받을 이메일
+        <input id="contactEmail" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" required>
+      </label>
+      <label>문의 내용
+        <textarea id="contactMessage" name="message" maxlength="3000" required></textarea>
+      </label>
 
-      <div class="actions">
-        <a class="button" href="mailto:stresstest.contact@gmail.com?subject=%5B%EC%8A%A4%ED%8A%B8%EB%A0%88%EC%8A%A4%20%EC%A7%84%EB%8B%A8%EC%86%8C%5D%20%EB%AC%B8%EC%9D%98">이메일 보내기</a>
-        <a class="button secondary" href="./index.html">← 테스트 홈으로 돌아가기</a>
-      </div>
+      <input type="hidden" name="_subject" value="[스트레스 진단소] 새 문의가 도착했습니다">
+      <input type="hidden" name="_template" value="table">
+      <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 
-      <div class="guide">
-        <strong>빠른 확인을 위한 안내</strong><br>
-        오류 문의 시 사용한 기기, 브라우저, 문제가 발생한 화면을 함께 적어주시면 확인에 도움이 됩니다.
-      </div>
-      <p class="privacy">이메일로 보내주신 정보는 문의 확인과 답변 목적으로만 사용합니다. 민감한 개인정보는 보내지 마세요.</p>
-    </section>
+      <button id="sendButton" class="button" type="submit">이메일로 문의 보내기 →</button>
+      <p id="formStatus" class="status" role="status" aria-live="polite"></p>
+    </form>
+
+    <div class="direct">
+      또는 아래 주소로 바로 메일을 보내셔도 됩니다
+      <a href="mailto:stresstest.contact@gmail.com">stresstest.contact@gmail.com</a>
+    </div>
+    <a class="back" href="./index.html">← 테스트 홈으로 돌아가기</a>
+    <p class="privacy">입력하신 정보는 문의 확인과 답변 목적으로만 사용됩니다.</p>
   </main>
+
+  <script>
+    (function(){
+      var form = document.getElementById('contactForm');
+      var button = document.getElementById('sendButton');
+      var status = document.getElementById('formStatus');
+      var endpoint = 'https://formsubmit.co/ajax/stresstest.contact@gmail.com';
+
+      function showStatus(message, type){
+        status.textContent = message;
+        status.className = 'status show ' + type;
+      }
+
+      form.addEventListener('submit', async function(event){
+        event.preventDefault();
+        if(!form.checkValidity()){
+          form.reportValidity();
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent = '전송 중...';
+        status.className = 'status';
+
+        try{
+          var response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {'Accept':'application/json'},
+            body: new FormData(form)
+          });
+          var result = await response.json().catch(function(){ return {}; });
+          if(!response.ok || result.success === 'false' || result.success === false){
+            throw new Error(result.message || '전송 실패');
+          }
+          showStatus('문의가 전송되었습니다. 확인 후 입력하신 이메일로 답변드리겠습니다.', 'success');
+          form.reset();
+        }catch(error){
+          showStatus('전송하지 못했습니다. 잠시 후 다시 시도하거나 아래 이메일 주소로 보내주세요.', 'error');
+        }finally{
+          button.disabled = false;
+          button.textContent = '이메일로 문의 보내기 →';
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
